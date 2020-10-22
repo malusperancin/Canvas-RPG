@@ -1,0 +1,339 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <style>
+        @font-face {
+            font-family: fonte;
+            src: url('fonte.ttf');
+        }
+
+        #fonte {
+            font-family: fonte;
+            font-size: 90px;
+            color: white;
+        }
+
+        body {
+            background-image: url("fundao.jpg");
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        #jogo {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        #botao {
+            font-family: fonte;
+            font-size: 20px;
+            border-radius: 10%;
+            margin-top: 10px;
+            height: 50px;
+            width: 110px;
+            color: rgb(0, 0, 0);
+            background-color: rgb(81, 173, 62);
+
+            border-color: rgb(66, 122, 14);
+
+        }
+
+        #pontos {
+            font-family: fonte;
+            font-size: 25px;
+            color: white;
+        }
+
+        #botao:hover {
+            color: rgb(4, 34, 4);
+            background-color: rgb(64, 126, 52);
+            border-color: rgb(66, 122, 14);
+        }
+    </style>
+
+    <meta charset="utf-8" />
+    <title>Animação</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script language="JavaScript" type="text/javascript">
+        var objCanvas = null; // objeto que representa o canvas
+        var objContexto = null; // objeto que representa o
+        // Controle de Posicionamento do Heroi
+        var xHeroi = 230;
+        var yHeroi = 210;
+        // Controle de Posicionamento do Monstro
+        var xMonstro;
+        var yMonstro;
+        var level = 5;
+
+        var xMoeda;
+        var yMoeda;
+
+        var esquerda = 30;
+        var cima = 20;
+        var baixo = 410;
+        var direita = 450;
+        // Objetos Image para cada coisa que vai aparecer na tela
+        var imgFundo = new Image();
+        imgFundo.src = "fundo.png";
+        var imgMoeda = new Image();
+        imgMoeda.src = "moeda.png";
+        var imgHeroi = new Image();
+        imgHeroi.src = "heroi.png";
+        var imgMonstro = new Image();
+        imgMonstro.src = "monstro.png";
+
+        var perdeu = false;
+        var qtosPontos = 0;
+        //=================
+        // INÍCIO DA PÁGINA
+var som = new Audio('som.mp3');
+
+
+        function Iniciar() {
+
+
+            // KEY PRESS do HERÓI
+            $(document).keypress(function (e) {
+                if (!perdeu) {
+                    if (e.which == 115) {
+                        MovimentoDoHeroiCima();
+                    }
+                    if (e.which == 119) {
+                        MovimentoDoHeroiBaixo();
+
+                    }
+                    if (e.which == 100) {
+                        MovimentoDoHeroiDireita();
+
+                    }
+                    if (e.which == 97) {
+                        MovimentoDoHeroiEsquerda();
+                    }
+                }
+            });
+            $("#pontos").text("Clique em começar para jogar!")
+            objCanvas = document.getElementById("meuCanvas");
+            objContexto = objCanvas.getContext("2d");
+            AtualizaTela();
+        }
+
+        //================
+        //BOTÃO P/ COMEÇAR
+        function Comecar() {
+            imgMonstro.src = "monstro.png";
+            qtospontos = 0;
+            $("#pontos").text("Pontos: 0")
+            esquerda = 30;
+            cima = 20;
+            baixo = 410;
+            direita = 450;
+            imgFundo.src = "fundo.png";
+            qtosPontos = 0;
+            perdeu = false;
+            xHeroi = 230;
+            yHeroi = 210;
+            xMonstro = 20;
+            yMonstro = 30;
+            xMoeda = Math.round(Math.random() * (430 / 10)) * 10 + 30;
+            yMoeda = Math.round(Math.random() * (430 / 10)) * 10 + 30;
+        }
+
+
+        setInterval(function () {
+            setTimeout(function () {
+                MovimentoDoMonstrox();
+            }, 10);
+            setTimeout(function () {
+                MovimentoDoMonstroy();
+            }, 10);
+            AtualizaTela();
+        }, 10);
+        AtualizaTela();
+
+
+
+        //============================
+        //MOVIMENTOS DOS PERSONAGENS
+
+        function MovimentoDoHeroiDireita() {
+            xHeroi = (xHeroi + 10);
+
+            Verificar();
+            AtualizaTela();
+        }
+
+        function MovimentoDoHeroiEsquerda() {
+            xHeroi = (xHeroi - 10);
+
+            Verificar();
+            AtualizaTela();
+        }
+
+        function MovimentoDoHeroiCima() {
+            yHeroi = (yHeroi + 10);
+
+            Verificar();
+            AtualizaTela();
+        }
+
+        function MovimentoDoHeroiBaixo() {
+            yHeroi = (yHeroi - 10);
+
+            Verificar();
+            AtualizaTela();
+        }
+
+        // MONSTRO
+        function MovimentoDoMonstrox() {
+            if (xHeroi < xMonstro) {
+                xMonstro = xMonstro - 1;
+            } else {
+                xMonstro = xMonstro + 1;
+            }
+            Verificar();
+            AtualizaTela();
+        }
+
+        function MovimentoDoMonstroy() {
+            if (yHeroi < yMonstro) {
+                yMonstro = yMonstro - 1;
+            } else {
+                yMonstro = yMonstro + 1;
+            }
+            Verificar();
+            AtualizaTela();
+        }
+
+        //=========================
+        // ATUALIZAÇÃO TELA E VERIFICAÇÃO
+
+        function AtualizaTela() {
+            objContexto.drawImage(imgFundo, 0, 0);
+            objContexto.drawImage(imgHeroi, xHeroi, yHeroi);
+            objContexto.drawImage(imgMonstro, xMonstro, yMonstro);
+            objContexto.drawImage(imgMoeda, xMoeda, yMoeda);
+        }
+
+        function Verificar() {
+            if (!perdeu) {
+                if (Math.abs(xHeroi - xMonstro) < level && Math.abs(yHeroi - yMonstro) < level) {
+                    if (qtosPontos >= 2)
+                        $("#pontos").text("você perdeu com " + qtosPontos +
+                            " pontos. Clique em começar para jogar novamente!");
+                    else
+                        $("#pontos").text("você perdeu com " + qtosPontos +
+                            " ponto. Clique em começar para jogar novamente!");
+                    perdeu = true;
+                }
+
+                if (Math.abs(xHeroi - xMoeda) <= 10 && Math.abs(yHeroi - yMoeda) <= 10) {
+                    qtosPontos++;
+                        som.play(); //som da moedinha
+
+                    xMoeda = Math.round(Math.random() * (430 / 10)) * 10 + 40;
+                    yMoeda = Math.round(Math.random() * (430 / 10)) * 10 + 40;
+                    $("#pontos").text("Pontos: " + qtosPontos)
+
+                    if (qtosPontos == 4) {
+                        imgFundo.src = "fundo2.png";
+                        esquerda += 30;
+                        cima += 30;
+                        baixo -= 30;
+                        direita -= 30;
+
+                        xMoeda = Math.round(Math.random() * (430 / 10)) * 10 + 30;
+                        yMoeda = Math.round(Math.random() * (430 / 10)) * 10 + 30;
+
+                    }
+                    if (qtosPontos == 8) {
+                        imgFundo.src = "fundo3.png";
+                        esquerda += 30;
+                        cima += 30;
+                        baixo -= 30;
+                        direita -= 30;
+
+                        xMoeda = Math.round(Math.random() * (430 / 10)) * 10 + 20;
+                        yMoeda = Math.round(Math.random() * (430 / 10)) * 10 + 20;
+
+                    }
+                    if (qtosPontos == 12) {
+                        imgFundo.src = "fundo4.png";
+                        esquerda += 30;
+                        cima += 30;
+                        baixo -= 30;
+                        direita -= 30;
+                        level = 30;
+                        xMoeda = Math.round(Math.random() * (430 / 10)) * 10 + 10;
+                        yMoeda = Math.round(Math.random() * (430 / 10)) * 10 + 10;
+                        imgMonstro.src = "monstro2.png";
+                    }
+                    AtualizaTela();
+
+
+
+                }
+
+                if (xMoeda < esquerda) {
+                    xMoeda = esquerda;
+                }
+                if (yMoeda < cima) {
+                    yMoeda = cima;
+                }
+                if (yMoeda > baixo) {
+                    yMoeda = baixo;
+                }
+                if (xMoeda > direita) {
+                    xMoeda = direita;
+                }
+
+
+                if (xHeroi < esquerda) {
+                    xHeroi = esquerda;
+                }
+                if (yHeroi < cima) {
+                    yHeroi = cima;
+                }
+                if (yHeroi > baixo) {
+                    yHeroi = baixo;
+                }
+                if (xHeroi > direita) {
+                    xHeroi = direita;
+                }
+
+                if (xMonstro < esquerda) {
+                    xMonstro = esquerda;
+                }
+                if (yMonstro < cima) {
+                    yMonstro = cima;
+                }
+                if (yMonstro > baixo) {
+                    yMonstro = baixo;
+                }
+                if (xMonstro > direita) {
+                    xMonstro = direita;
+                }
+            } else {
+                yMonstro = 10000;
+                xMonstro = 10000;
+            }
+        }
+    </script>
+</head>
+
+<body onLoad="Iniciar();">
+    <div id="jogo">
+        <label id="fonte"> JOGO RPG </label>
+        <p id="pontos">Pontos: 0 </p>
+        <br>
+        <canvas id="meuCanvas" width="512" height="480" margin="auto">
+            Seu browser não suporta o elemento CANVAS, atualize-se!!!
+        </canvas>
+        <br>
+        <input id="botao" type="button" value="Começar" onclick="Comecar()">
+    </div>
+
+</body>
+
+</html>
